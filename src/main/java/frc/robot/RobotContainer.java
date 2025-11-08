@@ -16,9 +16,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.swerve.SwerveTeleopCMD;
 import frc.robot.commands.targeting.Alignment;
+import frc.robot.subsystems.ClimberStateMachine;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.DeepHang;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.ClimberStateMachine.State;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 import frc.robot.subsystems.targeting.Vision;
 
@@ -40,6 +42,7 @@ public class RobotContainer {
   private SwerveTeleopCMD swerveTeleopCMD;
   
   private DeepHang deepHang;
+  private ClimberStateMachine CSM;
 
   private CoralManipulator coralManipulator;
 
@@ -100,10 +103,11 @@ public class RobotContainer {
 
   private void createDeepHang() {
     deepHang = new DeepHang();
+    CSM = new ClimberStateMachine(deepHang);
     
-    mechJoystick.button(7).whileTrue(deepHang.fwd()).onFalse(deepHang.stop());
+    mechJoystick.button(7).whileTrue(CSM.tryState(State.EXTEND)).onFalse(CSM.tryState(State.HOLD));
 
-    mechJoystick.button(8).whileTrue(deepHang.rev()).onFalse(deepHang.stop());
+    mechJoystick.button(8).whileTrue(CSM.tryState(State.RETRACT)).onFalse(CSM.tryState(State.HOLD));
   }
 
   private void createCoralManipulator() {

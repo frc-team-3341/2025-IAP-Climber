@@ -82,6 +82,14 @@ public class DeepHang extends SubsystemBase {
     return hangEncoder.getVelocity() * 0.2;
   }
 
+  public boolean topP(){
+    return upperLimit.isPressed();
+  }
+
+  public boolean bottomP(){
+    return lowerLimit.isPressed();
+  }
+
 
   @Override
   public void periodic() {
@@ -121,27 +129,31 @@ public class DeepHang extends SubsystemBase {
     hangEncoder.setPosition(0);
   }
 
-  public Command fwd() {
-    return this.runOnce(() -> {
-      // The set command is basically setting duty cycle
-      // We have 12v from the battery, and a value of 1 means to always suply that 12 v
-      // A value of 0.5 means that for half of a period, the motor controller will supply 12v
-      // and during the other half, it will supply 0 v
-      // Because we are only going to control the deep hang during this time and
-      // we need full power to lift, we want to always be supplying 12v, hence the set value being 1
-      deepHang.set(1); 
-    });
-  }
+  // public Command fwd() {
+  //   return this.runOnce(() -> {
+  //     // The set command is basically setting duty cycle
+  //     // We have 12v from the battery, and a value of 1 means to always suply that 12 v
+  //     // A value of 0.5 means that for half of a period, the motor controller will supply 12v
+  //     // and during the other half, it will supply 0 v
+  //     // Because we are only going to control the deep hang during this time and
+  //     // we need full power to lift, we want to always be supplying 12v, hence the set value being 1
+  //     deepHang.set(1); 
+  //   });
+  // }
 
-  public Command rev() {
-    return this.runOnce(() -> {
-      deepHang.set(-1);
-    });
-  }
+  // public Command rev() {
+  //   return this.runOnce(() -> {
+  //     deepHang.set(-1);
+  //   });
+  // }
 
-  public Command stop() {
-    return this.runOnce(() -> {
-      deepHang.set(0);
-    });
+  // public Command stop() {
+  //   return this.runOnce(() -> {
+  //     deepHang.set(0);
+  //   });
+  // }
+
+  public void setMotor(double d){
+    deepHang.set(d);
   }
 }
