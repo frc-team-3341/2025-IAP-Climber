@@ -1,4 +1,4 @@
-# 2025-ReefScape
+# 2025-IAP-CLIMBER
 
 ## Vendor Libs required
 - Studica
@@ -8,8 +8,6 @@
 
 
 ## Current Code Status
-- Swerve (TeleOp): Working and tested
-- Auto/Vision: Not included
-- Elevator: Working and tested
-- Deep Hang: Working and tested
-- Coral Manipulator: Old/Not Tested
+- StateMachine implemented
+
+
