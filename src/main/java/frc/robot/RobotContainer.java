@@ -64,5 +64,9 @@ public class RobotContainer {
     climber = new Climber(); // Climber CAN ID was inactive, causing a timeout
     JoystickButton climberControl = new JoystickButton(mechanismJoy, 17);
     //Throttle switching the power hasn't been updated yet. Should test code before implementing
+  
+  // need to do button mapping for the controller
+  
+  
   }
 }

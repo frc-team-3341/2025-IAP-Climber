@@ -39,23 +39,22 @@ public class Climber extends SubsystemBase {
   public Climber() {
 
     climbSparkMax = new SparkMax(Constants.ClimberConstants.extPort, MotorType.kBrushless);
-    
+    /* 
     forwardLimit = climbSparkMax.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
     forwardLimit.enableLimitSwitch(true);
 
     reverseLimit = climbSparkMax.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
     reverseLimit.enableLimitSwitch(true);
 
-    encoder = climbSparkMax.getEncoder();
+    */
+    // encoder = climbSparkMax.getEncoder();
 
-    SparkMax motorE;
-        revLimit = motorE.getReverseLimitSwitch();
+    // SparkMax motorE;
+        // revLimit = motorE.getReverseLimitSwitch();
 
 
-    encoder.setPositionConversionFactor(Constants.ClimberConstants.climberConversionFactor);
-    encoder.setVelocityConversionFactor(Constants.ClimberConstants.velocityConversionFactor);
-    
-
+    // encoder.setPositionConversionFactor(Constants.ClimberConstants.climberConversionFactor);
+    // encoder.setVelocityConversionFactor(Constants.ClimberConstants.velocityConversionFactor);
 
   }
 
@@ -101,8 +100,8 @@ public class Climber extends SubsystemBase {
       encoder.setPosition(Constants.ClimberConstants.maxExtensionLimit);
     }
 
-    forwardLimit.enableLimitSwitch(!override);
-    reverseLimit.enableLimitSwitch(!override);
+    // forwardLimit.enableLimitSwitch(!override);
+    // reverseLimit.enableLimitSwitch(!override);
 
     SmartDashboard.putBoolean("forward Limit", forwardLimit.isPressed());
     SmartDashboard.putBoolean("reverse Limit", reverseLimit.isPressed());
