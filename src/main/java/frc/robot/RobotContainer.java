@@ -47,8 +47,14 @@ public class RobotContainer {
 
 
   public RobotContainer() {
+    DataLogManager.start();
+
+
+    DriverStation.startDataLog(DataLogManager.getLog());
+
     
     // Construct all other things
+
   }
 
 //    moveBackIntoAmp = new MoveBackIntoAmp(swerve);
