@@ -47,6 +47,7 @@ public class ClimberStateMachine extends SubsystemBase{
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(1.0);
                             statey = State.EXTEND;
+                            System.out.println("gurt");
                         });
                 }
                 break;
@@ -66,6 +67,7 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case EXTEND:
                     case RETRACT:
+                    case IDLE:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
                             statey = State.HOLD;
@@ -97,20 +99,20 @@ public class ClimberStateMachine extends SubsystemBase{
 
     }
     public void periodic(){
-        switch (statey){
-            case EXTEND:
-                if (cl.forwardLimit.isPressed()){
-                    this.tryState(State.HOLD);
-                }
-                break;
-            case RETRACT:
-                if (cl.reverseLimit.isPressed()){
-                    this.tryState(State.HOLD);
-                }
-                break;
-            default:
-                break;
-        }
+    //     switch (statey){
+    //         case EXTEND:
+    //             if (cl.forwardLimit.isPressed()){
+    //                 this.tryState(State.HOLD);
+    //             }
+    //             break;
+    //         case RETRACT:
+    //             if (cl.reverseLimit.isPressed()){
+    //                 this.tryState(State.HOLD);
+    //             }
+    //             break;
+    //         default:
+    //             break;
+    //     }
     }
 
 }
