@@ -41,6 +41,7 @@ public class RobotContainer {
  
   // Empty Climber object
   private Climber climber;
+  private ClimberStateMachine climberstate;
 
   // Field centric toggle - true for field centric, false for robot centric
   private boolean fieldCentricToggle = true;
@@ -62,6 +63,7 @@ public class RobotContainer {
 
   public void configureClimber() {
     climber = new Climber(); // Climber CAN ID was inactive, causing a timeout
+    climberstate = new ClimberStateMachine(climber);
     JoystickButton climberControl = new JoystickButton(mechanismJoy, 17);
     //Throttle switching the power hasn't been updated yet. Should test code before implementing
   
