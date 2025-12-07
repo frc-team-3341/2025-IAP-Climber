@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import org.littletonrobotics.junction.Logger;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -46,6 +48,7 @@ public class ClimberStateMachine extends SubsystemBase{
                     case HOLD:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(1.0);
+                            Logger.recordOutput("State Event", statey.toString() + " -> EXTEND");
                             statey = State.EXTEND;
                             System.out.println("gurt");
                         });
@@ -59,6 +62,7 @@ public class ClimberStateMachine extends SubsystemBase{
                     case HOOK:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(-1.0);
+                            Logger.recordOutput("State Event", statey.toString() + " -> RETRACT");
                             statey = State.RETRACT;
                         });
                 }
@@ -70,6 +74,7 @@ public class ClimberStateMachine extends SubsystemBase{
                     case IDLE:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
+                            Logger.recordOutput("State Event", statey.toString() + " -> HOLD");
                             statey = State.HOLD;
                         });
                 }
@@ -80,6 +85,7 @@ public class ClimberStateMachine extends SubsystemBase{
                     case RETRACT:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
+                            Logger.recordOutput("State Event", statey.toString() + " -> HOOK");
                             statey = State.HOOK;
                         });
                 }
@@ -90,15 +96,22 @@ public class ClimberStateMachine extends SubsystemBase{
                     case RETRACT:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
+                            Logger.recordOutput("State Event", statey.toString() + " -> IDLE");
                             statey = State.IDLE;
                         });
                 }
                 break;
         }
+        Logger.recordOutput("State Event", statey.toString() + " X->X" + desiredstate.toString());
         return Commands.print("its joever 3: cuz "+desiredstate+" couldnt switch to up "+statey);
+        
 
     }
     public void periodic(){
+        Logger.recordOutput("State", statey.toString());
+        Logger.recordOutput("Motor Speed", cl.getSpeed());
+        Logger.recordOutput("Postion", cl.getArmPositionInMeters());
+        Logger.recordOutput("Current", cl.getCurrent());
     //     switch (statey){
     //         case EXTEND:
     //             if (cl.forwardLimit.isPressed()){
@@ -113,6 +126,7 @@ public class ClimberStateMachine extends SubsystemBase{
     //         default:
     //             break;
     //     }
+    
     }
 
 }

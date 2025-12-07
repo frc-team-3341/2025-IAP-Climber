@@ -8,6 +8,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,6 +22,8 @@ import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
@@ -31,6 +34,9 @@ public class Climber extends SubsystemBase {
 
   public SparkLimitSwitch forwardLimit;
   public SparkLimitSwitch reverseLimit;
+
+  private AHRS navx = new AHRS(NavXComType.kMXP_SPI);
+
 
   public RelativeEncoder encoder;
 
@@ -77,6 +83,10 @@ public class Climber extends SubsystemBase {
     climbSparkMax.set(power);
   }
 
+  public double getSpeed(){
+    return climbSparkMax.get();
+  }
+
   public void resetEncoder(){
     encoder.setPosition(0);
   }
@@ -94,6 +104,10 @@ public class Climber extends SubsystemBase {
 
   public double getArmVelocityInMeters() {
     return encoder.getVelocity();
+  }
+
+  public double getCurrent(){
+    return climbSparkMax.getOutputCurrent();
   }
 
   @Override
@@ -114,5 +128,9 @@ public class Climber extends SubsystemBase {
     // SmartDashboard.putBoolean("reverse Limit", reverseLimit.isPressed());
     // SmartDashboard.putNumber("climber current", (int)(climbSparkMax.getOutputCurrent()));
     // SmartDashboard.putNumber("climber position", encoder.getPosition());
+    SmartDashboard.putNumber("pitch", navx.getPitch());
+    SmartDashboard.putNumber("roll", navx.getRoll());
+    SmartDashboard.putNumber("yaw", navx.getYaw());
+    
   }
 }
