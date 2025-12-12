@@ -19,6 +19,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -31,6 +33,8 @@ public class Climber extends SubsystemBase {
 
   public SparkLimitSwitch forwardLimit;
   public SparkLimitSwitch reverseLimit;
+
+  private AHRS navx = new AHRS(NavXComType.kMXP_SPI);
 
   public RelativeEncoder encoder;
 
@@ -114,5 +118,9 @@ public class Climber extends SubsystemBase {
     // SmartDashboard.putBoolean("reverse Limit", reverseLimit.isPressed());
     // SmartDashboard.putNumber("climber current", (int)(climbSparkMax.getOutputCurrent()));
     // SmartDashboard.putNumber("climber position", encoder.getPosition());
+    
+    SmartDashboard.putNumber("pitch", navx.getPitch());
+    SmartDashboard.putNumber("roll", navx.getRoll());
+    SmartDashboard.putNumber("yaw", navx.getYaw());
   }
 }

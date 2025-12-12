@@ -113,6 +113,7 @@ public class ClimberStateMachine extends SubsystemBase{
     //         default:
     //             break;
     //     }
+    System.out.println(statey);
     }
 
 }
