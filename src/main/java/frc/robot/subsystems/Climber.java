@@ -42,6 +42,10 @@ public class Climber extends SubsystemBase {
 
   public boolean override = false;
 
+  public double l1 = 0.1;
+  public double l2 = 0.2;
+  public boolean isAuto = false;
+
   public Climber() {
 
     climbSparkMax = new SparkMax(Constants.ClimberConstants.extPort, MotorType.kBrushless);

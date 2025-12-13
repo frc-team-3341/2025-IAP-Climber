@@ -18,13 +18,14 @@ public class ClimberStateMachine extends SubsystemBase{
         EXTEND,
         RETRACT,
         HOLD,
-        HOOK;
+        HOOK,
+        L1,
+        L2;
     }
 
     public State statey;
 
     private final Climber cl;
-
 
     public ClimberStateMachine(Climber cl){
         this.statey = State.IDLE;
@@ -72,6 +73,8 @@ public class ClimberStateMachine extends SubsystemBase{
                     case EXTEND:
                     case RETRACT:
                     case IDLE:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
                             Logger.recordOutput("State Event", statey.toString() + " -> HOLD");
@@ -83,6 +86,8 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case EXTEND:
                     case RETRACT:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
                             Logger.recordOutput("State Event", statey.toString() + " -> HOOK");
@@ -94,11 +99,50 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case EXTEND:
                     case RETRACT:
+                    case HOLD:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
                             cl.extendArmWithPower(0.0);
                             Logger.recordOutput("State Event", statey.toString() + " -> IDLE");
                             statey = State.IDLE;
                         });
+                }
+            case L1:
+                switch(statey){
+                    case HOLD:
+                    case IDLE:
+                    return new InstantCommand(() -> {
+                        int pow = 0;
+                        statey = State.L1;
+                        if (cl.getArmPositionInMeters() > cl.l1+0.05){
+                            tryState(State.RETRACT);
+                        }
+                        else if (cl.getArmPositionInMeters() < cl.l1-0.05){
+                            tryState(State.EXTEND);
+                        }
+                        else{
+                            tryState(State.HOLD);
+                        }
+                    });
+                }
+            case L2:
+                switch(statey){
+                    case HOLD:
+                    case IDLE:
+                    return new InstantCommand(() -> {
+                        int pow = 0;
+                        statey = State.L2;
+                        if (cl.getArmPositionInMeters() > cl.l2+0.05){
+                            tryState(State.RETRACT);
+                        }
+                        else if (cl.getArmPositionInMeters() < cl.l2-0.05){
+                            tryState(State.EXTEND);
+                        }
+                        else{
+                            tryState(State.HOLD);
+                        }
+                    });
                 }
                 break;
         }

@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.XboxController;
 
 import com.studica.frc.AHRS.NavXComType;
 
@@ -74,16 +73,19 @@ public class RobotContainer {
   public void configureClimber() {
     climber = new Climber(); // Climber CAN ID was inactive, causing a timeout
     climberstate = new ClimberStateMachine(climber);
+    double tol = 0.05;
     //JoystickButton climberControl = new JoystickButton(mechanismJoy, 17);
     //Throttle switching the power hasn't been updated yet. Should test code before implementing
     // new JoystickButton(drivingXbox, 1).onTrue(climberstate.tryState(State.EXTEND));
     // new JoystickButton(drivingXbox, 2).onTrue(climberstate.tryState(State.RETRACT));
     // new JoystickButton(drivingXbox, 3).onFalse(climberstate.tryState(State.HOLD));
-    new Trigger(() -> drivingXbox.getPOV() == 0).onTrue(climberstate.tryState(State.EXTEND));
-    new Trigger(() -> drivingXbox.getPOV() == 180).onTrue(climberstate.tryState(State.RETRACT));
-    new Trigger(() -> drivingXbox.getPOV() == 0).onFalse(climberstate.tryState(State.HOLD));
-    new Trigger(() -> drivingXbox.getPOV() == 180).onFalse(climberstate.tryState(State.HOLD));
-
+    new Trigger(() -> drivingXbox.getPOV() == 0 && !climber.isAuto).onTrue(climberstate.tryState(State.EXTEND));
+    new Trigger(() -> drivingXbox.getPOV() == 180  && !climber.isAuto).onTrue(climberstate.tryState(State.RETRACT));
+    new Trigger(() -> drivingXbox.getPOV() == 0  && !climber.isAuto).onFalse(climberstate.tryState(State.HOLD));
+    new Trigger(() -> drivingXbox.getPOV() == 180  && !climber.isAuto).onFalse(climberstate.tryState(State.HOLD));
+    new Trigger(() -> drivingXbox.getRawButton(0)).onTrue(new InstantCommand(() -> {climber.isAuto = !climber.isAuto;}));
+    new Trigger(() -> drivingXbox.getRawButton(1) && climber.isAuto).whileTrue(climberstate.tryState(State.L1));
+    new Trigger(() -> drivingXbox.getRawButton(2) && climber.isAuto).whileTrue(climberstate.tryState(State.L2));
   // need to do button mapping for the controller
   
   
