@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.EnumMap;
@@ -26,6 +27,8 @@ public class ClimberStateMachine extends SubsystemBase{
 
     private final Climber cl;
 
+    public final double speedpow = 0.4;
+
     public ClimberStateMachine(Climber cl){
         this.statey = State.IDLE;
         this.cl = cl;
@@ -46,8 +49,10 @@ public class ClimberStateMachine extends SubsystemBase{
                     case IDLE:
                     case RETRACT:
                     case HOLD:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.extendArmWithPower(1.0);
+                            cl.extendArmWithPower(1.0*speedpow);
                             statey = State.EXTEND;
                             System.out.println("gurt");
                         });
@@ -59,8 +64,10 @@ public class ClimberStateMachine extends SubsystemBase{
                     case EXTEND:
                     case HOLD:
                     case HOOK:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.extendArmWithPower(-1.0);
+                            cl.extendArmWithPower(-1.0*speedpow);
                             statey = State.RETRACT;
                         });
                 }
@@ -106,35 +113,45 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case HOLD:
                     case IDLE:
-                    return new InstantCommand(() -> {
-                        int pow = 0;
+                    case L1:
+                    case L2:
+                    return Commands.run(() -> {
+                        //int pow = 0;
                         statey = State.L1;
-                        if (cl.getArmPositionInMeters() > cl.l1+0.05){
-                            tryState(State.RETRACT);
+                        System.out.println("g");
+                        if (cl.getArmPositionInMeters() > cl.l1+10){
+                            System.out.println("down"+statey);
+                            cl.extendArmWithPower(-1.0*speedpow);
                         }
-                        else if (cl.getArmPositionInMeters() < cl.l1-0.05){
-                            tryState(State.EXTEND);
+                        else if (cl.getArmPositionInMeters() < cl.l1-10){
+                            cl.extendArmWithPower(1*speedpow);
+                            System.out.println("mcguh");
                         }
                         else{
-                            tryState(State.HOLD);
+                            cl.extendArmWithPower(0);
+                            System.out.println("stillnwess");
+
                         }
-                    });
+                });
                 }
             case L2:
                 switch(statey){
                     case HOLD:
                     case IDLE:
-                    return new InstantCommand(() -> {
-                        int pow = 0;
+                    case L1:
+                    case L2:
+                    return Commands.run(() -> {
+                        //int pow = 0;
                         statey = State.L2;
-                        if (cl.getArmPositionInMeters() > cl.l2+0.05){
-                            tryState(State.RETRACT);
-                        }
-                        else if (cl.getArmPositionInMeters() < cl.l2-0.05){
-                            tryState(State.EXTEND);
+                        if (cl.getArmPositionInMeters() > cl.l2+0.1){
+                            System.out.println("down"+statey);
+                            cl.extendArmWithPower(-1.0*speedpow);                        }
+                        else if (cl.getArmPositionInMeters() < cl.l2-0.1){
+                            cl.extendArmWithPower(1.0*speedpow);
                         }
                         else{
-                            tryState(State.HOLD);
+                            System.out.println("down"+statey);
+                            cl.extendArmWithPower(0);
                         }
                     });
                 }
@@ -159,7 +176,8 @@ public class ClimberStateMachine extends SubsystemBase{
     //         default:
     //             break;
     //     }
-    System.out.println(statey);
+    //System.out.println(statey);
+    System.out.println(cl.getArmPositionInMeters());
     }
 
 }

@@ -33,7 +33,7 @@ public class RobotContainer {
   // ---------------------- END OF CONFIG SECTION --------------------------
 
   // Xbox + an additional one for PC use
-  private final Joystick drivingXbox = new Joystick(1);
+  private final Joystick drivingXbox = new Joystick(0);
   //private final Joystick simulationJoy = new Joystick(1);
   //private final static Joystick mechanismJoy = new Joystick(2);
 
@@ -79,13 +79,13 @@ public class RobotContainer {
     // new JoystickButton(drivingXbox, 1).onTrue(climberstate.tryState(State.EXTEND));
     // new JoystickButton(drivingXbox, 2).onTrue(climberstate.tryState(State.RETRACT));
     // new JoystickButton(drivingXbox, 3).onFalse(climberstate.tryState(State.HOLD));
-    new Trigger(() -> drivingXbox.getPOV() == 0 && !climber.isAuto).onTrue(climberstate.tryState(State.EXTEND));
-    new Trigger(() -> drivingXbox.getPOV() == 180  && !climber.isAuto).onTrue(climberstate.tryState(State.RETRACT));
-    new Trigger(() -> drivingXbox.getPOV() == 0  && !climber.isAuto).onFalse(climberstate.tryState(State.HOLD));
-    new Trigger(() -> drivingXbox.getPOV() == 180  && !climber.isAuto).onFalse(climberstate.tryState(State.HOLD));
-    new Trigger(() -> drivingXbox.getRawButton(0)).onTrue(new InstantCommand(() -> {climber.isAuto = !climber.isAuto;}));
-    new Trigger(() -> drivingXbox.getRawButton(1) && climber.isAuto).whileTrue(climberstate.tryState(State.L1));
-    new Trigger(() -> drivingXbox.getRawButton(2) && climber.isAuto).whileTrue(climberstate.tryState(State.L2));
+    new Trigger(() -> drivingXbox.getPOV() == 0).onTrue(climberstate.tryState(State.EXTEND));
+    new Trigger(() -> drivingXbox.getPOV() == 180).onTrue(climberstate.tryState(State.RETRACT));
+    new Trigger(() -> drivingXbox.getPOV() == 0).onFalse(climberstate.tryState(State.HOLD));
+    new Trigger(() -> drivingXbox.getPOV() == 180).onFalse(climberstate.tryState(State.HOLD));
+    new Trigger(() -> drivingXbox.getRawButtonPressed(1)).onTrue(new InstantCommand(() -> {climber.isAuto = !climber.isAuto;System.out.println("x");}));
+    new Trigger(() -> drivingXbox.getRawButtonPressed(2)).toggleOnTrue(climberstate.tryState(State.L1));
+    new Trigger(() -> drivingXbox.getRawButtonPressed(3)).toggleOnTrue(climberstate.tryState(State.L2));
   // need to do button mapping for the controller
   
   

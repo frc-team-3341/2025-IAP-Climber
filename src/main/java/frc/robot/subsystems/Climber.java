@@ -43,8 +43,8 @@ public class Climber extends SubsystemBase {
 
   public boolean override = false;
 
-  public double l1 = 0.1;
-  public double l2 = 0.2;
+  public double l1 = -200;
+  public double l2 = 2;
   public boolean isAuto = false;
 
   public Climber() {
@@ -65,7 +65,7 @@ public class Climber extends SubsystemBase {
     reverseLimit.enableLimitSwitch(true);
 
     */
-    // encoder = climbSparkMax.getEncoder();
+    encoder = climbSparkMax.getEncoder();
 
     // SparkMax motorE;
         // revLimit = motorE.getReverseLimitSwitch();
@@ -137,5 +137,6 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("pitch", navx.getPitch());
     SmartDashboard.putNumber("roll", navx.getRoll());
     SmartDashboard.putNumber("yaw", navx.getYaw());
+    SmartDashboard.putNumber("pos", getArmPositionInMeters());
   }
 }
