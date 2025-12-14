@@ -138,5 +138,11 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("roll", navx.getRoll());
     SmartDashboard.putNumber("yaw", navx.getYaw());
     SmartDashboard.putNumber("pos", getArmPositionInMeters());
+    SmartDashboard.putNumber("accelFull", navx.getAccelFullScaleRangeG());
+    SmartDashboard.putNumber("accelX", navx.getWorldLinearAccelX());
+    SmartDashboard.putNumber("accelY", navx.getWorldLinearAccelY());
+    SmartDashboard.putNumber("accelZ", navx.getWorldLinearAccelZ());
+
+
   }
 }

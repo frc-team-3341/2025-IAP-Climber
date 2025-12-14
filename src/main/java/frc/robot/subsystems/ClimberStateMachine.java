@@ -115,7 +115,7 @@ public class ClimberStateMachine extends SubsystemBase{
                     case IDLE:
                     case L1:
                     case L2:
-                    return Commands.run(() -> {
+                    return new RunCommand(() -> {
                         //int pow = 0;
                         statey = State.L1;
                         System.out.println("g");
@@ -132,7 +132,7 @@ public class ClimberStateMachine extends SubsystemBase{
                             System.out.println("stillnwess");
 
                         }
-                });
+                }).until(() -> cl.l1-0.1 <= cl.getArmPositionInMeters() && cl.getArmPositionInMeters() <= cl.l1+0.1);
                 }
             case L2:
                 switch(statey){
@@ -140,12 +140,13 @@ public class ClimberStateMachine extends SubsystemBase{
                     case IDLE:
                     case L1:
                     case L2:
-                    return Commands.run(() -> {
+                    return new RunCommand(() -> {
                         //int pow = 0;
                         statey = State.L2;
                         if (cl.getArmPositionInMeters() > cl.l2+0.1){
                             System.out.println("down"+statey);
-                            cl.extendArmWithPower(-1.0*speedpow);                        }
+                            cl.extendArmWithPower(-1.0*speedpow);                        
+                        }
                         else if (cl.getArmPositionInMeters() < cl.l2-0.1){
                             cl.extendArmWithPower(1.0*speedpow);
                         }
@@ -153,7 +154,7 @@ public class ClimberStateMachine extends SubsystemBase{
                             System.out.println("down"+statey);
                             cl.extendArmWithPower(0);
                         }
-                    });
+                }).until(() -> cl.l2-0.1 <= cl.getArmPositionInMeters() && cl.getArmPositionInMeters() <= cl.l2+0.1);
                 }
                 break;
         }
