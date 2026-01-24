@@ -142,6 +142,9 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("accelX", navx.getWorldLinearAccelX());
     SmartDashboard.putNumber("accelY", navx.getWorldLinearAccelY());
     SmartDashboard.putNumber("accelZ", navx.getWorldLinearAccelZ());
+    SmartDashboard.putNumber("amperage", climbSparkMax.getOutputCurrent());
+    SmartDashboard.putNumber("volt", climbSparkMax.getBusVoltage());
+
 
 
   }
