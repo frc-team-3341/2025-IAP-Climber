@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.EnumMap;
@@ -15,14 +18,18 @@ public class ClimberStateMachine extends SubsystemBase{
         EXTEND,
         RETRACT,
         HOLD,
-        HOOK;
+        HOOK,
+        L1,
+        L2;
     }
 
     public State statey;
 
-    private final DeepHang cl;
+    private final Climber cl;
 
-    public ClimberStateMachine(DeepHang cl){
+    public final double speedpow = 0.4;
+
+    public ClimberStateMachine(Climber cl){
         this.statey = State.IDLE;
         this.cl = cl;
     }
@@ -35,16 +42,19 @@ public class ClimberStateMachine extends SubsystemBase{
         statey = s;
     }
 
-    public Command tryState(State ds){
-        switch(ds){
+    public Command tryState(State desiredstate){
+        switch(desiredstate){
             case EXTEND:
                 switch(statey){
                     case IDLE:
                     case RETRACT:
                     case HOLD:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.setMotor(1.0);
+                            cl.extendArmWithPower(1.0*speedpow);
                             statey = State.EXTEND;
+                            System.out.println("gurt");
                         });
                 }
                 break;
@@ -54,8 +64,10 @@ public class ClimberStateMachine extends SubsystemBase{
                     case EXTEND:
                     case HOLD:
                     case HOOK:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.setMotor(-1.0);
+                            cl.extendArmWithPower(-1.0*speedpow);
                             statey = State.RETRACT;
                         });
                 }
@@ -64,8 +76,11 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case EXTEND:
                     case RETRACT:
+                    case IDLE:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.setMotor(0.0);
+                            cl.extendArmWithPower(0.0);
                             statey = State.HOLD;
                         });
                 }
@@ -74,8 +89,10 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case EXTEND:
                     case RETRACT:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.setMotor(0.0);
+                            cl.extendArmWithPower(0.0);
                             statey = State.HOOK;
                         });
                 }
@@ -84,39 +101,84 @@ public class ClimberStateMachine extends SubsystemBase{
                 switch(statey){
                     case EXTEND:
                     case RETRACT:
+                    case HOLD:
+                    case L1:
+                    case L2:
                         return new InstantCommand(() -> {
-                            cl.setMotor(0.0);
+                            cl.extendArmWithPower(0.0);
                             statey = State.IDLE;
                         });
                 }
+            case L1:
+                switch(statey){
+                    case HOLD:
+                    case IDLE:
+                    case L1:
+                    case L2:
+                    return new RunCommand(() -> {
+                        //int pow = 0;
+                        statey = State.L1;
+                        System.out.println("g");
+                        if (cl.getArmPositionInMeters() > cl.l1+10){
+                            System.out.println("down"+statey);
+                            cl.extendArmWithPower(-1.0*speedpow);
+                        }
+                        else if (cl.getArmPositionInMeters() < cl.l1-10){
+                            cl.extendArmWithPower(1*speedpow);
+                            System.out.println("mcguh");
+                        }
+                        else{
+                            cl.extendArmWithPower(0);
+                            System.out.println("stillnwess");
+
+                        }
+                }).until(() -> cl.l1-0.1 <= cl.getArmPositionInMeters() && cl.getArmPositionInMeters() <= cl.l1+0.1);
+                }
+            case L2:
+                switch(statey){
+                    case HOLD:
+                    case IDLE:
+                    case L1:
+                    case L2:
+                    return new RunCommand(() -> {
+                        //int pow = 0;
+                        statey = State.L2;
+                        if (cl.getArmPositionInMeters() > cl.l2+0.1){
+                            System.out.println("down"+statey);
+                            cl.extendArmWithPower(-1.0*speedpow);                        
+                        }
+                        else if (cl.getArmPositionInMeters() < cl.l2-0.1){
+                            cl.extendArmWithPower(1.0*speedpow);
+                        }
+                        else{
+                            System.out.println("down"+statey);
+                            cl.extendArmWithPower(0);
+                        }
+                }).until(() -> cl.l2-0.1 <= cl.getArmPositionInMeters() && cl.getArmPositionInMeters() <= cl.l2+0.1);
+                }
                 break;
         }
-        return Commands.print("its joever 3: cuz "+ds+" couldnt rizz up "+statey);
+        return Commands.print("its joever 3: cuz "+desiredstate+" couldnt switch to up "+statey);
+        
 
     }
     public void periodic(){
-        switch (statey){
-            case HOLD:
-                if (cl.topP()){
-                    this.tryState(State.HOOK);
-                }
-                if (cl.bottomP()){
-                    this.tryState(State.IDLE);
-                }
-            break;
-            case EXTEND:
-                if (cl.topP()){
-                    this.tryState(State.HOLD);
-                }
-                break;
-            case RETRACT:
-                if (cl.bottomP()){
-                    this.tryState(State.HOLD);
-                }
-                break;
-            default:
-                break;
-        }
+    //     switch (statey){
+    //         case EXTEND:
+    //             if (cl.forwardLimit.isPressed()){
+    //                 this.tryState(State.HOLD);
+    //             }
+    //             break;
+    //         case RETRACT:
+    //             if (cl.reverseLimit.isPressed()){
+    //                 this.tryState(State.HOLD);
+    //             }
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    //System.out.println(statey);
+    System.out.println(cl.getArmPositionInMeters());
     }
 
 }

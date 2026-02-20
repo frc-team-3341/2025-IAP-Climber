@@ -1,13 +1,2 @@
-# 2025-IAP-CLIMBER
-
-## Vendor Libs required
-- Studica
-- RevLib
-- Phoenix5
-- Phoenix6
-
-
-## Current Code Status
-- StateMachine implemented
-
-
+# as of 12/5
+Recreated Statemachine File, made it compatible, and implemente it in robot code
